@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+	"training.go/hangman/dictionary"
 	"training.go/hangman/hangman"
-	"training.go/hangman/hangman/dictionary"
 )
 
 func main()  {

@@ -1,6 +1,7 @@
 package hangman
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -12,7 +13,10 @@ type Game struct {
 	TurnsLeft int
 }
 
-func New(turns int, word string) *Game  {
+func New(turns int, word string) (*Game, error)  {
+ 	if len(word) < 2 {
+ 		return nil, fmt.Errorf("Word '%s' must be a least 2 characters. got %v ", word, len(word))
+	}
 	letters := strings.Split(strings.ToUpper(word), "")
 	found := make([]string, len(letters))
 	for i := 0; i < len(letters); i++ {
@@ -25,7 +29,7 @@ func New(turns int, word string) *Game  {
 		UsedLetters: []string{},
 		TurnsLeft: turns,
 	}
-	return g
+	return g, nil
 }
 
 func letterInWord(guess string, letters []string) bool  {
@@ -62,6 +66,10 @@ func hasWon(letters []string, foundLetters[]string) bool  {
 
 func (g *Game) MakeAGuess(guess string)  {
 	guess = strings.ToUpper(guess)
+	switch g.State {
+	case "won", "lost":
+		return;
+	}
 	if letterInWord(guess, g.UsedLetters) {
 		g.State = "alreadyGuessed"
 	} else if letterInWord(guess, g.Letters) {
