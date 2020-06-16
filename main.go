@@ -7,19 +7,29 @@ import (
 	"training.go/hangman/hangman"
 )
 
+
 func main()  {
 	err := dictionary.Load("word.txt")
 	if err != nil {
 		fmt.Printf("Could not load dictionary: %v", err)
 		os.Exit(1)
 	}
-	g := hangman.New(8, dictionary.PicWord())
+	hangman.DrawDificult()
+	diff, err := hangman.ChooseDificult()
+	if err != nil {
+		fmt.Printf("Error: %v", err)
+		os.Exit(1)
+	}
+	g, err := hangman.New(8, dictionary.PicWord(), hangman.GetNbHint(diff))
+	if err != nil {
+		fmt.Printf("Err: %v", err)
+	}
 	hangman.DrawWelcomde()
 
 	guess := ""
+	i := 1
 	for {
-		hangman.Draw(g, guess)
-
+		hangman.Draw(g, guess, i)
 		switch g.State {
 		case "won", "lost":
 			os.Exit(0)
@@ -32,5 +42,6 @@ func main()  {
 		}
 		guess = l
 		g.MakeAGuess(guess)
+		i++
 	}
 }

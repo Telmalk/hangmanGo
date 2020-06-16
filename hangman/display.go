@@ -130,6 +130,13 @@ func drawLetters(l [] string)  {
 	fmt.Println()
 }
 
+func DrawDificult()  {
+	fmt.Println("Chose '1', '2', or '3'")
+	fmt.Println("1: easy 3 indices")
+	fmt.Println("2: normal 1 indices")
+	fmt.Println("3: hard 0 indices")
+}
+
 func drawState(g *Game, guess string)  {
 	fmt.Print("Guessed: ")
 	drawLetters(g.FoundLetters)
@@ -144,6 +151,10 @@ func drawState(g *Game, guess string)  {
 		fmt.Printf("Letter '%s' was already used", guess)
 	case "badGuess":
 		fmt.Printf("Bad guess, '%s' is not in the word", guess)
+	case "hint":
+		fmt.Printf("The word contains letter(s) '%v' ", g.LetterHint)
+	case "notEnoughtHint":
+		fmt.Printf("You don't have hint in stock stock: %v", g.Hint)
 	case "lost":
 		fmt.Print("You lost :( The wordWard: ")
 		drawLetters(g.Letters)
@@ -154,7 +165,16 @@ func drawState(g *Game, guess string)  {
 
 }
 
-func Draw(g *Game, guess string)  {
+func infoGame(turnLeft, nbHint, turn int, letterHint []string)  {
+	fmt.Printf("Tour: %v\n", turn)
+	fmt.Printf("Vie restante: %v\n", turnLeft)
+	fmt.Printf("Indices retant: %v\n", nbHint)
+	fmt.Printf("Hint: %v\n", letterHint)
+	fmt.Println("Tap hint to get a hint")
+}
+
+func Draw(g *Game, guess string, i int)  {
+	infoGame(g.TurnsLeft, g.Hint, i, g.LetterHint)
 	drawTurns(g.TurnsLeft)
 	drawState(g, guess)
 }

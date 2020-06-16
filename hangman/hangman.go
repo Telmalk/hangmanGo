@@ -2,7 +2,9 @@ package hangman
 
 import (
 	"fmt"
+	"math/rand"
 	"strings"
+	"time"
 )
 
 type Game struct {
@@ -11,9 +13,12 @@ type Game struct {
 	FoundLetters []string
 	UsedLetters []string
 	TurnsLeft int
+	Hint int
+	LetterHint []string
+
 }
 
-func New(turns int, word string) (*Game, error)  {
+func New(turns int, word string, hint int) (*Game, error)  {
  	if len(word) < 2 {
  		return nil, fmt.Errorf("Word '%s' must be a least 2 characters. got %v ", word, len(word))
 	}
@@ -28,6 +33,7 @@ func New(turns int, word string) (*Game, error)  {
 		FoundLetters: found,
 		UsedLetters: []string{},
 		TurnsLeft: turns,
+		Hint: hint,
 	}
 	return g, nil
 }
@@ -64,13 +70,38 @@ func hasWon(letters []string, foundLetters[]string) bool  {
 	return true
 }
 
+func (g *Game) GetLetter() bool {
+	if g.Hint <= 0 {
+		return false
+	}
+	g.Hint--
+	rand.Seed(time.Now().Unix())
+	g.LetterHint = append(g.LetterHint, g.Letters[rand.Intn(len(g.Letters))])
+	return true
+}
+
+func GetNbHint(difficulty string) int  {
+	switch difficulty {
+	case "1":
+		return 3
+	case "2":
+		return 1
+	default:
+		return 0
+	}
+}
+
 func (g *Game) MakeAGuess(guess string)  {
 	guess = strings.ToUpper(guess)
 	switch g.State {
 	case "won", "lost":
 		return;
 	}
-	if letterInWord(guess, g.UsedLetters) {
+	if g.Hint <= 0 && guess == "HINT" {
+		g.State = "notEnoughtHint"
+	} else if g.GetLetter() {
+		g.State = "hint"
+	} else if letterInWord(guess, g.UsedLetters) {
 		g.State = "alreadyGuessed"
 	} else if letterInWord(guess, g.Letters) {
 		g.State = "goodGuess"
