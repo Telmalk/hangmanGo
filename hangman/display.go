@@ -174,6 +174,9 @@ func infoGame(turnLeft, nbHint, turn int, letterHint []string)  {
 }
 
 func Draw(g *Game, guess string, i int)  {
+	if i > 1 {
+		print("\033[H\033[2J")
+	}
 	infoGame(g.TurnsLeft, g.Hint, i, g.LetterHint)
 	drawTurns(g.TurnsLeft)
 	drawState(g, guess)

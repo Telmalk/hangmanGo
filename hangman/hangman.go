@@ -70,8 +70,8 @@ func hasWon(letters []string, foundLetters[]string) bool  {
 	return true
 }
 
-func (g *Game) GetLetter() bool {
-	if g.Hint <= 0 {
+func (g *Game) GetLetter(guess string) bool {
+	if g.Hint <= 0 || guess != "HINT"  {
 		return false
 	}
 	g.Hint--
@@ -99,7 +99,7 @@ func (g *Game) MakeAGuess(guess string)  {
 	}
 	if g.Hint <= 0 && guess == "HINT" {
 		g.State = "notEnoughtHint"
-	} else if g.GetLetter() {
+	} else if g.GetLetter(guess) {
 		g.State = "hint"
 	} else if letterInWord(guess, g.UsedLetters) {
 		g.State = "alreadyGuessed"
